@@ -2,8 +2,9 @@
 	import { Button } from 'bits-ui';
 	import { fade } from 'svelte/transition';
 	import type { PageProps } from './$types';
-	import { getCounterByPerson, increment, incrementByPerson } from '$lib';
+	import { getCount, getCounterByPerson, increment, incrementByPerson } from '$lib';
 	import NumberFlow from '@number-flow/svelte';
+	import { onDestroy, onMount } from 'svelte';
 
 	let { data }: PageProps = $props();
 
@@ -18,6 +19,21 @@
 	let debouncedPersonNameCounter = 0;
 	let debounceTimeout: ReturnType<typeof setTimeout> | null = null;
 	let debouncedPersonNameCounterTimeout: ReturnType<typeof setTimeout> | null = null;
+
+	let getCountDelay: ReturnType<typeof setInterval> | null = null;
+
+	onMount(async () => {
+		getCountDelay = setInterval(async () => {
+			console.log('Fetching count');
+			clickedNumber = await getCount();
+		}, 30000);
+	});
+
+	onDestroy(() => {
+		if (getCountDelay) {
+			clearInterval(getCountDelay);
+		}
+	});
 
 	async function debouncedIncrementCounter() {
 		debouncedCounter++;

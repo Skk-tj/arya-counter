@@ -38,10 +38,19 @@ export async function getCounterByPerson(personName: string | null): Promise<num
         throw new Error("personName is empty");
     }
 
-    const response = await fetch(`/${personName}`)
+    const response = await fetch(`/api/${personName}`)
     if (!response.ok) {
         throw new Error(`Failed to get counter for ${personName}`)
     }
 
     return await response.json() as number;
+}
+
+export async function getCount(): Promise<number> {
+    const response = await fetch(`/api`)
+    if (!response.ok) {
+        throw new Error('Failed to get counter')
+    }
+
+    return await response.json() as number
 }
