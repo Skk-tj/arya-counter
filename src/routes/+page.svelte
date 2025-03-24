@@ -14,7 +14,9 @@
 	let userClicked: number | null = $state(null);
 
 	let debouncedCounter = 0;
+	let debouncedPersonNameCounter = 0;
 	let debounceTimeout: ReturnType<typeof setTimeout> | null = null;
+	let debouncedPersonNameCounterTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	async function debouncedIncrementCounter() {
 		debouncedCounter++;
@@ -28,6 +30,21 @@
 		debounceTimeout = setTimeout(async () => {
 			await increment(debouncedCounter);
 			debouncedCounter = 0; // Reset the click count after updating
+		}, 500);
+	}
+
+	async function debouncedIncrementByPerson() {
+		debouncedPersonNameCounter++;
+
+		// Clear the previous timeout if it exists
+		if (debouncedPersonNameCounterTimeout) {
+			clearTimeout(debouncedPersonNameCounterTimeout);
+		}
+
+		// Set a new timeout to update the remote storage after 500ms
+		debouncedPersonNameCounterTimeout = setTimeout(async () => {
+			await incrementByPerson(finalName, debouncedPersonNameCounter);
+			debouncedPersonNameCounter = 0; // Reset the click count after updating
 		}, 500);
 	}
 </script>
@@ -81,8 +98,8 @@
 				const incrementResult = debouncedIncrementCounter();
 				const promises: Promise<unknown>[] = [incrementResult];
 
-				audioElement?.load();
 				if (audioElement) {
+					audioElement.load();
 					const playAudio = audioElement.play();
 					promises.push(playAudio);
 				}
@@ -91,19 +108,11 @@
 
 				if (!isNameEmpty && userClicked !== null) {
 					userClicked += 1;
-					const byPerson = incrementByPerson(finalName);
+					const byPerson = debouncedIncrementByPerson();
 					promises.push(byPerson);
 				}
 
-				const [resultValue, _, byPerson] = await Promise.all(promises);
-
-				if (resultValue instanceof Object && 'counter' in resultValue) {
-					if (clickedNumber !== resultValue.counter) {
-						throw new Error(
-							`Counter mismatch, the server side is updated to ${resultValue.counter} but client side is ${clickedNumber}`
-						);
-					}
-				}
+				await Promise.all(promises);
 			}}
 		>
 			ARYA IS CUTE
