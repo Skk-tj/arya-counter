@@ -45,5 +45,9 @@
 		"onlyBuiltDependencies": [
 			"esbuild"
 		]
+	},
+	"engines": {
+		"node": "latest",
+		"npm": "latest"
 	}
 }
