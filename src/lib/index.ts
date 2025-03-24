@@ -1,5 +1,5 @@
-export async function increment(): Promise<{ counter: number }> {
-    const response = await fetch('/api/increment')
+export async function increment(by: number): Promise<{ counter: number }> {
+    const response = await fetch(`/api/increment?by=${by}`)
 
     if (!response.ok) {
         throw new Error('Failed to increment counter')

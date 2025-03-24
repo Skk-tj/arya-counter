@@ -12,6 +12,24 @@
 	let isNameEmpty = $derived(nameWhoClicked === '' || nameWhoClicked === null);
 	let audioElement: HTMLAudioElement | undefined = $state();
 	let userClicked: number | null = $state(null);
+
+	let debouncedCounter = 0;
+	let debounceTimeout: ReturnType<typeof setTimeout> | null = null;
+
+	async function debouncedIncrementCounter() {
+		debouncedCounter++;
+
+		// Clear the previous timeout if it exists
+		if (debounceTimeout) {
+			clearTimeout(debounceTimeout);
+		}
+
+		// Set a new timeout to update the remote storage after 500ms
+		debounceTimeout = setTimeout(async () => {
+			await increment(debouncedCounter);
+			debouncedCounter = 0; // Reset the click count after updating
+		}, 500);
+	}
 </script>
 
 <audio src="/cute.mp3" preload="auto" bind:this={audioElement}></audio>
@@ -60,7 +78,7 @@
 		<Button.Root
 			class="w-80 rounded-2xl bg-purple-600 p-4 font-semibold text-white active:scale-[0.98] active:transition-all"
 			onclick={async () => {
-				const incrementResult = increment();
+				const incrementResult = debouncedIncrementCounter();
 				const promises: Promise<unknown>[] = [incrementResult];
 
 				audioElement?.load();
@@ -78,7 +96,6 @@
 				}
 
 				const [resultValue, _, byPerson] = await Promise.all(promises);
-				console.log(resultValue);
 
 				if (resultValue instanceof Object && 'counter' in resultValue) {
 					if (clickedNumber !== resultValue.counter) {
