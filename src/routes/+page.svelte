@@ -25,7 +25,8 @@
 	onMount(async () => {
 		getCountDelay = setInterval(async () => {
 			console.log('Fetching count');
-			clickedNumber = await getCount();
+			const countString = await getCount();
+			clickedNumber = parseInt(countString);
 		}, 30000);
 	});
 

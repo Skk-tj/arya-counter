@@ -46,11 +46,11 @@ export async function getCounterByPerson(personName: string | null): Promise<num
     return await response.json() as number;
 }
 
-export async function getCount(): Promise<number> {
+export async function getCount(): Promise<string> {
     const response = await fetch(`/api`)
     if (!response.ok) {
         throw new Error('Failed to get counter')
     }
 
-    return await response.json() as number
+    return await response.json() as string
 }
