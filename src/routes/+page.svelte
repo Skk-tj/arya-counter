@@ -53,7 +53,7 @@
 
 <div class="flex h-screen w-screen items-center justify-start bg-[url(/bg.png)] bg-cover bg-center">
 	<div
-		class="ml-48 flex h-128 w-128 flex-col items-center justify-center gap-12 rounded-2xl backdrop-blur-lg"
+		class="mx-auto flex h-128 w-128 flex-col items-center justify-center gap-12 rounded-2xl backdrop-blur-lg xl:ml-48"
 	>
 		<div class="flex flex-col items-center gap-4">
 			<span class="font-sour-gummy text-3xl">Arya is cute × {clickedNumber}!</span>
@@ -69,11 +69,11 @@
 			{/if}
 		</div>
 
-		<div class="flex items-center gap-4 p-2">
+		<div class="flex items-center gap-4 p-0.5">
 			<input
 				type="text"
 				bind:value={nameWhoClicked}
-				class="rounded-2xl bg-purple-600 p-4 text-white"
+				class="flex-1 rounded-2xl bg-purple-600 p-4 text-white"
 				placeholder="Type your name (optional)"
 				spellcheck="false"
 			/>
