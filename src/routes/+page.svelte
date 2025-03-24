@@ -2,18 +2,16 @@
 	import { Button } from 'bits-ui';
 	import { fade } from 'svelte/transition';
 	import type { PageProps } from './$types';
-	import { increment } from '$lib';
+	import { getCounterByPerson, increment, incrementByPerson } from '$lib';
 
 	let { data }: PageProps = $props();
 
 	let clickedNumber: number = $state(data.counter);
-
 	let finalName: string = $state('');
 	let nameWhoClicked: string = $state('');
-
-	let buttonDisabled = $derived(nameWhoClicked === '' || nameWhoClicked === null);
-
+	let isNameEmpty = $derived(nameWhoClicked === '' || nameWhoClicked === null);
 	let audioElement: HTMLAudioElement | undefined = $state();
+	let userClicked: number | null = $state(null);
 </script>
 
 <audio src="/cute.mp3" preload="auto" bind:this={audioElement}></audio>
@@ -28,6 +26,12 @@
 			{#if finalName !== ''}
 				<span transition:fade class="font-sour-gummy text-sm">Entered name: {finalName}</span>
 			{/if}
+
+			{#if userClicked !== null}
+				<span transition:fade class="font-sour-gummy text-sm"
+					>You've said "Arya is cute" {userClicked} times!</span
+				>
+			{/if}
 		</div>
 
 		<div class="flex items-center gap-4 p-2">
@@ -40,13 +44,14 @@
 			/>
 
 			<Button.Root
-				class="rounded-2xl {buttonDisabled
+				class="rounded-2xl {isNameEmpty
 					? 'bg-gray-500'
 					: 'bg-purple-600'} p-4 font-semibold text-white active:scale-[0.98] active:transition-all"
-				onclick={() => {
+				onclick={async () => {
 					finalName = nameWhoClicked;
+					userClicked = await getCounterByPerson(finalName);
 				}}
-				disabled={buttonDisabled}
+				disabled={isNameEmpty}
 			>
 				Apply Name
 			</Button.Root>
@@ -55,12 +60,32 @@
 		<Button.Root
 			class="w-80 rounded-2xl bg-purple-600 p-4 font-semibold text-white active:scale-[0.98] active:transition-all"
 			onclick={async () => {
+				const incrementResult = increment();
+				const promises: Promise<unknown>[] = [incrementResult];
+
 				audioElement?.load();
-				await audioElement?.play();
+				if (audioElement) {
+					const playAudio = audioElement.play();
+					promises.push(playAudio);
+				}
+
 				clickedNumber += 1;
-				const resultValue = await increment();
-				if (clickedNumber !== resultValue.counter) {
-					throw new Error('Counter mismatch');
+
+				if (!isNameEmpty && userClicked !== null) {
+					userClicked += 1;
+					const byPerson = incrementByPerson(finalName);
+					promises.push(byPerson);
+				}
+
+				const [resultValue, _, byPerson] = await Promise.all(promises);
+				console.log(resultValue);
+
+				if (resultValue instanceof Object && 'counter' in resultValue) {
+					if (clickedNumber !== resultValue.counter) {
+						throw new Error(
+							`Counter mismatch, the server side is updated to ${resultValue.counter} but client side is ${clickedNumber}`
+						);
+					}
 				}
 			}}
 		>
