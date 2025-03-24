@@ -8,7 +8,7 @@ declare global {
 		// interface PageState {}
 		interface Platform {
 			env: {
-				COUNTER: DurableObjectNamespace;
+				'ARYA-COUNTER': KVNamespace;
 			};
 			context: {
 				waitUntil(promise: Promise<any>): void;
