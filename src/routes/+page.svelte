@@ -96,21 +96,20 @@
 		<Button.Root
 			class="w-80 rounded-2xl bg-purple-600 p-4 font-semibold text-white active:scale-[0.98] active:transition-all"
 			onclick={async () => {
+				clickedNumber += 1;
+
 				const incrementResult = debouncedIncrementCounter();
 				const promises: Promise<unknown>[] = [incrementResult];
-
-				if (audioElement) {
-					audioElement.load();
-					const playAudio = audioElement.play();
-					promises.push(playAudio);
-				}
-
-				clickedNumber += 1;
 
 				if (!isNameEmpty && userClicked !== null) {
 					userClicked += 1;
 					const byPerson = debouncedIncrementByPerson();
 					promises.push(byPerson);
+				}
+
+				if (audioElement) {
+					audioElement.load();
+					audioElement.play();
 				}
 
 				await Promise.all(promises);
