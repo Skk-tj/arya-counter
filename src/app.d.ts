@@ -10,10 +10,6 @@ declare global {
 			env: {
 				'ARYA-COUNTER': KVNamespace;
 			};
-			context: {
-				waitUntil(promise: Promise<any>): void;
-			};
-			caches: CacheStorage & { default: Cache }
 		}
 	}
 }
