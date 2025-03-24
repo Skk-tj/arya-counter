@@ -1,3 +1,9 @@
-export function incrementForUser(userName: string): void {
-    console.log(`Incrementing count for ${userName}`);
+export async function increment() {
+    const response = await fetch('/api/increment')
+
+    if (!response.ok) {
+        throw new Error('Failed to increment counter')
+    }
+
+    return await response.json() as { counter: number }
 }
