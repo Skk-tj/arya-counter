@@ -5,6 +5,9 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "arya-counter",
+	"compatibility_flags": [
+    	"nodejs_compat"
+  	],
 	"compatibility_date": "2025-03-21",
 	"pages_build_output_dir": ".svelte-kit/cloudflare",
 	"observability": {
