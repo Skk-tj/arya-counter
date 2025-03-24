@@ -3,6 +3,7 @@
 	import { fade } from 'svelte/transition';
 	import type { PageProps } from './$types';
 	import { getCounterByPerson, increment, incrementByPerson } from '$lib';
+	import NumberFlow from '@number-flow/svelte';
 
 	let { data }: PageProps = $props();
 
@@ -56,7 +57,7 @@
 		class="mx-auto flex h-128 w-128 flex-col items-center justify-center gap-12 rounded-2xl backdrop-blur-lg xl:ml-48"
 	>
 		<div class="flex flex-col items-center gap-4">
-			<span class="font-sour-gummy text-3xl">Arya is cute × {clickedNumber}!</span>
+			<NumberFlow value={clickedNumber} prefix="Arya is cute ×" trend={+1}></NumberFlow>
 
 			{#if finalName !== ''}
 				<span transition:fade class="font-sour-gummy text-sm">Entered name: {finalName}</span>
@@ -119,3 +120,16 @@
 		</Button.Root>
 	</div>
 </div>
+
+<style lang="postcss">
+	@reference "tailwindcss";
+	@reference '../app.css';
+
+	:global(number-flow-svelte::part(prefix)) {
+		@apply font-sour-gummy text-2xl;
+	}
+
+	:global(number-flow-svelte::part(number)) {
+		@apply font-sour-gummy text-4xl;
+	}
+</style>
