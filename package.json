@@ -47,7 +47,7 @@
 		]
 	},
 	"engines": {
-		"node": "latest",
-		"npm": "latest"
+		"node": "^23.0.0",
+		"npm": "^11.2.0"
 	}
 }
